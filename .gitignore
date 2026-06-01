@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.venv/
+venv/
+
+# Codex scratch / local agent artifacts
+.codex.log
+.codex-task.md
+.codex/
+
+# Local hunt outputs
+report.md
+listings.json
+*.local.json
+.codex
