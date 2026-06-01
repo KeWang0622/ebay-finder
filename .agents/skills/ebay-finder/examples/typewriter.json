@@ -1,0 +1,46 @@
+{
+  "criteria": {
+    "raw_request": "1930 - 60 type writer, has to work, high value for money",
+    "item_summary": "working vintage typewriter, 1930s–1960s, best value-for-money",
+    "must_work": true,
+    "value_focused": true,
+    "target_price_usd": 120,
+    "era": "1930-1960",
+    "deal_breakers": ["repaint", "reproduction", "toy"],
+    "nice_to_haves": ["serviced", "tested", "new ribbon", "original case", "manual"],
+    "notes": "Vague wish across a 30-year span. Fan out over the value brands where good working machines hide, cap the budget near the anchor, sort one angle by newest to catch underpriced fresh listings, and reward 'tested/serviced' language while penalizing 'for parts'."
+  },
+  "plans": [
+    {
+      "label": "Value brands · working · budget",
+      "keywords": "vintage typewriter (royal,remington,underwood,smith-corona,olympia)",
+      "category_id": "159923",
+      "conditions": ["USED"],
+      "buying_options": ["FIXED_PRICE", "BEST_OFFER"],
+      "price_min_usd": 40,
+      "price_max_usd": 180,
+      "sort": "BEST_MATCH",
+      "item_location_country": "US",
+      "limit": 50
+    },
+    {
+      "label": "Serviced / tested only",
+      "keywords": "vintage typewriter serviced tested working",
+      "category_id": "159923",
+      "conditions": ["USED"],
+      "price_max_usd": 200,
+      "sort": "PRICE_LOW",
+      "item_location_country": "US",
+      "limit": 50
+    },
+    {
+      "label": "Newly listed · catch underpriced",
+      "keywords": "vintage typewriter working",
+      "category_id": "159923",
+      "conditions": ["USED"],
+      "price_max_usd": 150,
+      "sort": "NEWLY_LISTED",
+      "limit": 50
+    }
+  ]
+}

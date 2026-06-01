@@ -1,0 +1,43 @@
+{
+  "criteria": {
+    "raw_request": "get me a pokemon card with the highest value for money, under budget $100",
+    "item_summary": "Pokémon card with the best collectible value-for-money, under $100",
+    "must_work": false,
+    "value_focused": true,
+    "target_price_usd": 100,
+    "deal_breakers": ["proxy", "fake", "reproduction", "custom", "orica", "replica", "not authentic"],
+    "nice_to_haves": ["PSA", "CGC", "graded", "1st edition", "holo", "WOTC", "wizards of the coast", "shadowless", "vintage"],
+    "notes": "For trading cards, 'value for money' means the most collectible upside per dollar. Strategy: bias toward authenticity-protected value (graded slabs), vintage WOTC-era holos that historically hold value, and freshly-listed underpriced singles; hard-exclude proxies/fakes. Cap at the $100 budget. Authenticity is the #1 risk, so reward graded/established sellers and flag the rest."
+  },
+  "plans": [
+    {
+      "label": "Graded value · PSA/CGC vintage holo under budget",
+      "keywords": "pokemon PSA CGC holo vintage -proxy -fake -reproduction -custom -lot",
+      "conditions": ["USED"],
+      "buying_options": ["FIXED_PRICE", "BEST_OFFER"],
+      "price_min_usd": 30,
+      "price_max_usd": 100,
+      "sort": "BEST_MATCH",
+      "item_location_country": "US",
+      "limit": 50
+    },
+    {
+      "label": "Vintage WOTC · 1st edition / shadowless holo",
+      "keywords": "pokemon 1st edition shadowless holo wizards -proxy -fake -reproduction -custom",
+      "buying_options": ["FIXED_PRICE", "BEST_OFFER"],
+      "price_max_usd": 100,
+      "sort": "PRICE_LOW",
+      "item_location_country": "US",
+      "limit": 50
+    },
+    {
+      "label": "Newly listed · catch underpriced singles",
+      "keywords": "pokemon holo rare card -proxy -fake -reproduction -custom -lot",
+      "price_min_usd": 20,
+      "price_max_usd": 100,
+      "sort": "NEWLY_LISTED",
+      "item_location_country": "US",
+      "limit": 50
+    }
+  ]
+}

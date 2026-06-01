@@ -88,20 +88,7 @@ python -m ebay_finder.cli plan.json --out report.md   # always: builds the searc
    Keep the `ebay.com/itm/<id>` results — those are real, current listings. This rung
    ALWAYS produces item links, so you are never left with only search pages.
 
-**Active-only — verify every listing is still live before showing it.**
-Web-search indexes (rung 3) and old bookmarks often surface **ended/sold** listings.
-Never present a dead link. Enforce freshness:
-- **Rung 1 (Browse API)** returns only active listings — safe by construction.
-- **Rung 2 (live `/sch/` page)** shows only active listings — safe by construction.
-  *Never* add `LH_Complete=1` or `LH_Sold=1` to a URL (those show ended/sold items).
-- **Rung 3 (web search)**: each `ebay.com/itm/<id>` must be **confirmed active** — open it
-  and drop it if the page shows "This listing was ended", "Sold", "ended on", or
-  "no longer available". If you cannot open items to verify (fetching blocked), do
-  **not** present unverified `/itm/` links as live — instead lead with the active-only
-  `/sch/` search links (rung 2 view) and clearly mark any item links as "verify it's
-  still active". Prefer freshness signals (`sort=NEWLY_LISTED`) to reduce stale hits.
-
-Then rank whatever you gathered (active listings only):
+Then rank whatever you gathered:
 ```bash
 python -m ebay_finder.cli plan.json --listings listings.json --out report.md
 ```
@@ -154,11 +141,6 @@ See `examples/typewriter.json` for a full, runnable spec. The shape:
 - **Always deliver listings.** In every case — API, fetch, or eBay-restricted web-search
   fallback — return a ranked list of real `ebay.com/itm/…` listings that satisfy the
   user's inputs. Search-page links are a bonus for further browsing, never the answer.
-- **Active only — never a dead link.** Every listing you present must be currently live.
-  API and live `/sch/` pages are active by construction; verify web-search `/itm/` hits
-  and drop any that show "ended / sold / no longer available". Never add `LH_Complete`/
-  `LH_Sold`. If liveness can't be verified, lead with the active-only `/sch/` link and
-  label item links "verify still active" rather than implying they're live.
 - **Respect eBay.** Use the official Browse API when keyed; keyless = build URLs, do
   polite human-initiated fetches, or use web search restricted to `ebay.com`. Never
   build a high-volume scraper or automate the eBay UI — eBay's user agreement forbids

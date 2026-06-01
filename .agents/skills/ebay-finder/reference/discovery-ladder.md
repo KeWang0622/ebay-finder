@@ -37,19 +37,3 @@ python -m ebay_finder.cli plan.json --listings listings.json --out report.md
 When only titles + links are available, still return a ranked shortlist using the
 working/condition signals in the titles, add fair-price bands, and tell the user to
 confirm price ≤ budget on each item. **Never stop at search-page URLs only.**
-
-## Active-only (never show a dead link)
-
-Web indexes and old links frequently point to **ended/sold** listings. A shopping
-assistant that returns dead links is broken. Enforce:
-
-- **Rung 1 (Browse API)** and **rung 2 (live `/sch/` page)** return only *active*
-  listings by construction. Prefer them. **Never** add `LH_Complete=1` or `LH_Sold=1`
-  to a URL — those deliberately show ended/sold items.
-- **Rung 3 (web search)**: open each `ebay.com/itm/<id>` and **drop it** if the page
-  shows "This listing was ended", "Sold", "ended on", or "no longer available".
-- If you cannot open items to verify liveness (fetching blocked), do not present
-  unverified `/itm/` links as live. Lead with the active-only `/sch/` search link and
-  mark any item links "verify it's still active". Bias to `sort=NEWLY_LISTED` to reduce
-  stale results.
-

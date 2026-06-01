@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ebay-finder": {
+      "source": "KeWang0622/ebay-finder",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "63d63fda3701d05d7e5b5ab6fbb2b85c55616ea4cdf7968ae417aa4aac077f38"
+    }
+  }
+}
