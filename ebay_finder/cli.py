@@ -3,7 +3,7 @@
 The *agent* writes a plan spec (criteria + a fan-out of QueryPlans) as JSON; this
 CLI turns it into a hunt:
 
-    python -m treasure_hunter.cli plan.json --out report.md
+    python -m ebay_finder.cli plan.json --out report.md
 
 What it does, in order:
   1. Always builds clickable eBay search URLs from the plans (keyless backbone).
@@ -171,7 +171,7 @@ def _try_browse(plans, criteria):
         return None  # signal: keyless
     from .browse_api import get_app_token, run_plans  # raises if missing -> surfaced
 
-    cache = os.environ.get("EBAY_TOKEN_CACHE", os.path.expanduser("~/.cache/treasure_hunter/token.json"))
+    cache = os.environ.get("EBAY_TOKEN_CACHE", os.path.expanduser("~/.cache/ebay_finder/token.json"))
     token = get_app_token(cid, secret, cache_path=cache)
     return run_plans(plans, token)
 
@@ -214,7 +214,7 @@ def run(spec: dict[str, Any], listings_override: list[dict] | None) -> HuntResul
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
-        prog="treasure_hunter",
+        prog="ebay_finder",
         description="Vague wish -> ranked eBay hunt. Keyless by default; richer with an eBay API key.",
     )
     ap.add_argument("spec", help="Path to plan spec JSON (criteria + plans). '-' for stdin.")

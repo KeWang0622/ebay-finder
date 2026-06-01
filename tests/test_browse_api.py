@@ -1,8 +1,8 @@
 import json
 import urllib.parse
 
-from treasure_hunter import browse_api
-from treasure_hunter.contract import BuyingOption, Condition, NormalizedListing, QueryPlan, Sort
+from ebay_finder import browse_api
+from ebay_finder.contract import BuyingOption, Condition, NormalizedListing, QueryPlan, Sort
 
 
 class FakeResponse:
@@ -28,13 +28,34 @@ def test_build_filter_uses_ebay_grammar_codes():
         returns_accepted=True,
     )
 
+    # Numeric eBay condition IDs must go in `conditionIds` (the `conditions`
+    # filter only accepts enum names like NEW|USED). See ref-buy-browse-filters.
     assert (
         browse_api._build_filter(plan)
         == "price:[40..180],priceCurrency:USD,"
-        "conditions:{3000|1500},"
+        "conditionIds:{3000|1500},"
         "buyingOptions:{FIXED_PRICE|BEST_OFFER},"
         "itemLocationCountry:US,returnsAccepted:true"
     )
+
+
+def test_aspect_and_location_operands_are_sanitized():
+    # Agent-supplied aspect values must not be able to inject filter grammar
+    # ({ } | , : [ ]) that survives eBay's server-side percent-decoding.
+    plan = QueryPlan(
+        label="x",
+        keywords="k",
+        category_id="159923",
+        item_location_country="US},conditionIds:{7000",
+        aspects=(("Brand", ("Royal|Remington", "Under{wood}")),),
+    )
+    filt = browse_api._build_filter(plan)
+    aspect = browse_api._build_aspect_filter(plan)
+    # No injected grammar leaks through.
+    assert "conditionIds:{7000" not in filt
+    assert "itemLocationCountry:US" in filt
+    assert "Royal|Remington" not in aspect
+    assert "RoyalRemington" in aspect and "Underwood" in aspect
 
 
 def test_search_builds_request_and_maps_item_summary(monkeypatch):

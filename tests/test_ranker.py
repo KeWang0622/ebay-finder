@@ -1,7 +1,7 @@
 import pytest
 
-from treasure_hunter.contract import Condition, Criteria, NormalizedListing
-from treasure_hunter.ranker import rank
+from ebay_finder.contract import Condition, Criteria, NormalizedListing
+from ebay_finder.ranker import rank
 
 
 def listing(

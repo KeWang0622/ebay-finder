@@ -14,10 +14,12 @@ def _price(listing: NormalizedListing) -> str:
     total = listing.total_price_usd
     if total is None:
         return "price n/a"
+    # Surface non-USD currencies so cross-currency results are never mistaken for USD.
+    cur = "" if (listing.currency or "USD") == "USD" else f" {listing.currency}"
     base = f"${listing.price_usd:,.2f}" if listing.price_usd is not None else "?"
     if listing.shipping_usd:
-        return f"{base} + ${listing.shipping_usd:,.2f} ship = **${total:,.2f}**"
-    return f"**${total:,.2f}**"
+        return f"{base} + ${listing.shipping_usd:,.2f} ship = **${total:,.2f}{cur}**"
+    return f"**${total:,.2f}{cur}**"
 
 
 def _seller(listing: NormalizedListing) -> str:
@@ -45,7 +47,7 @@ def render(result: HuntResult, *, top: int = 8) -> str:
     lines: list[str] = []
     mode = "keyless (search-strategist)" if result.keyless else "API (Browse API)"
 
-    lines.append(f"# 🔭 Treasure Hunt — {c.item_summary}")
+    lines.append(f"# 🔭 eBay Finder — {c.item_summary}")
     lines.append("")
     lines.append(f"> _“{c.raw_request.strip()}”_")
     lines.append("")
@@ -107,6 +109,6 @@ def render(result: HuntResult, *, top: int = 8) -> str:
         lines.append("")
 
     lines.append("---")
-    lines.append("_Built by 🔭 Treasure Hunter. Prices and availability change fast — "
+    lines.append("_Built by 🔭 eBay Finder. Prices and availability change fast — "
                  "verify on eBay before buying._")
     return "\n".join(lines)

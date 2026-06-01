@@ -1,142 +1,159 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Treasure Hunter logo" width="120" />
+<img src="assets/logo.png" alt="eBay Finder" width="116" />
 
-# 🔭 Treasure Hunter for eBay
+# eBay Finder
 
-### Describe what you want in plain words — in *any* language — and get a ranked hunt across eBay.
+**Say what you want in plain words. Get a ranked hunt across eBay.**
 
-<em>“a <strong>1930–60</strong> typewriter, has to <strong>work</strong>, high <strong>性价比</strong>”</em> → a shortlist of real listings, ranked, with reasons.
+*“a 1930–60 typewriter, has to actually **work**, best **bang for the buck** under $150”*
+→ a shortlist of real listings, ranked, with the reasons shown.
 
-[![Install with skills](https://img.shields.io/badge/install-npx%20skills%20add-000?style=for-the-badge)](https://github.com/vercel-labs/skills)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-![Zero dependencies](https://img.shields.io/badge/runtime%20deps-0-success?style=for-the-badge)
-![Works without an API key](https://img.shields.io/badge/API%20key-optional-orange?style=for-the-badge)
+<br/>
 
-<img src="assets/hero.png" alt="Treasure Hunter hero" width="100%" />
+```bash
+npx skills add KeWang0622/ebay-finder
+```
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Runtime deps: 0](https://img.shields.io/badge/runtime%20deps-0-success)
+![API key: optional](https://img.shields.io/badge/API%20key-optional-orange)
+![Any language](https://img.shields.io/badge/works%20in-any%20language-8a2be2)
+[![Star this repo](https://img.shields.io/github/stars/KeWang0622/ebay-finder?style=social)](https://github.com/KeWang0622/ebay-finder)
+
+<img src="assets/hero.png" alt="" width="100%" />
 
 </div>
 
 ---
 
-## The problem
+## Keyword search can't do this
 
-Keyword search breaks the moment your wish has **soft constraints**:
+You know the feeling. You half-know what you want, with a few hard rules:
 
-> *"a 1930–60 typewriter, **has to work**, **high value-for-money**"*
+> *“a 1930–60 typewriter, has to work, best value for money”*
 
-You can't type that into eBay. You can't even type it into ChatGPT and get real, current, ranked listings back. eBay is building its own AI shopper — but it's **closed, US-only, and not scriptable.**
+You can't type that into eBay's search box. And if you ask ChatGPT, it can't pull up **real, current, ranked** listings. eBay is building its own AI shopper — but it's **closed, US-only, and you can't script it.**
 
-**Treasure Hunter is the open one that works for everyone.** It turns a fuzzy wish into expert eBay searches, fans out across angles, inspects the listings (including the photos), and hands you a ranked shortlist with the reasoning shown.
+**eBay Finder is the open one, and it works for everyone.**
+
+## See it work
+
+For that exact wish, it fans out across the value brands, caps the budget near your anchor, and ranks — and the **cheapest** listing is *not* the winner, because you said it has to work:
+
+```text
+🏆 Top finds
+
+1. Olympia SM3 — RESTORED & guaranteed working, ribbon included      score 70/100
+   $110 + $18 ship = $128 · 99.9% positive (15,000 ratings) · New York, US
+   works ~100% · value ×1.00
+   ✓ working/tested language found  ✓ excellent seller
+
+5. Underwood — FOR PARTS OR REPAIR, untested                          score  0/100
+   $69 · ⚠ for-parts
+   ✗ you said it must work — this listing strongly signals it doesn't
+```
+
+Every line tells you *why* it ranked there. No black box.
 
 ## How it works
 
-<div align="center">
-<img src="assets/flow.png" alt="Vague wish → search angles → ranked finds" width="100%" />
-</div>
+<div align="center"><img src="assets/flow.png" alt="vague wish → search angles → ranked finds" width="100%" /></div>
 
-The trick: **the intelligence is the AI agent that runs the skill.** Your assistant (Claude, etc.) reads the wish, designs the strategy, and judges the photos and prices. The bundled, zero-dependency Python tool does only the deterministic parts:
+The trick: **the AI agent running the skill is the brain.** It reads your wish, plans the strategy, and judges the photos and prices. The bundled, zero-dependency Python tool does only the boring, deterministic parts — so it needs **no API key and no LLM key.**
 
-1. **Understand** the wish → a structured goal (`must_work`, budget, era, deal-breakers, nice-to-haves) — *any language in, your language out.*
-2. **Strategize** → several search angles (broad, per-brand, budget-capped, newest-first) instead of one weak query.
-3. **Search** → build precise eBay search URLs *(keyless)* or call the official Browse API *(with a free key)*.
-4. **Inspect** → the agent looks at listing photos to confirm condition, model, and "working" claims.
-5. **Rank & report** → transparent 0–100 scoring on value-vs-market, working-confidence, condition, seller trust, returns — with a reason on every line and ⚠ flags for risks.
+| | |
+|--|--|
+| **1 · Understand** | your wish → a structured goal (must-work, budget, era, deal-breakers) — *any language in, your language out* |
+| **2 · Strategize** | one weak query becomes several smart angles: broad, per-brand, budget-capped, newest-first |
+| **3 · Search** | build precise eBay search URLs *(keyless)* — or call the official Browse API *(free key)* |
+| **4 · Inspect** | the agent looks at the listing **photos** to confirm condition and "working" claims |
+| **5 · Rank** | transparent 0–100 score: value-vs-market, works-confidence, condition, seller trust, returns |
 
-## Quick start
-
-Install the skill into any agent that supports the [skills](https://github.com/vercel-labs/skills) format:
+## Install & use
 
 ```bash
-npx skills add KeWang0622/ebay-treasure-hunter
+npx skills add KeWang0622/ebay-finder
 ```
 
-Then just ask your agent, in plain language:
+Then just ask your agent, however you'd say it:
 
-> *“find me a 1930–60 typewriter that actually works, best bang for the buck under $150”*
-> *“想要一台能用的老式打字机，1930到1960年代，高性价比”*
+> *“find me a 1930–60 typewriter that actually works, best value under $150”*
+> *“una máquina de escribir de los años 40 que funcione, buena relación calidad-precio”*
 
-That's it. **No API key required** — you get expertly-built, fully-filtered eBay search links plus a ranked read of the listings. Want richer, automatic results? Add a [free eBay API key](SETUP.md) (~2 minutes) and it fetches and ranks listings for you.
+**No API key needed** — you get expertly-filtered eBay search links plus a ranked read of the listings. Want it to fetch and rank results automatically? Add a [free eBay key](SETUP.md) (~2 min).
 
-### Run the tool directly (optional)
+<details>
+<summary><b>Run the tool directly (optional)</b></summary>
 
 ```bash
 # Keyless: build the search strategy + URLs for a wish
-python -m treasure_hunter.cli examples/typewriter.json
+python -m ebay_finder.cli examples/typewriter.json
 
 # Rank listings your agent fetched from those pages
-python -m treasure_hunter.cli examples/typewriter.json --listings listings.json --out report.md
+python -m ebay_finder.cli examples/typewriter.json --listings listings.json --out report.md
 
 # With a free eBay key set, it fetches + ranks automatically
 export EBAY_CLIENT_ID=... EBAY_CLIENT_SECRET=...
-python -m treasure_hunter.cli examples/typewriter.json --out report.md
+python -m ebay_finder.cli examples/typewriter.json --out report.md
 ```
+</details>
 
-## Example output
+## It works for anything you'd hunt for
 
-For the flagship wish — *“1930–60 typewriter, has to work, high 性价比”* — Treasure Hunter fans out across the value brands (Royal, Remington, Underwood, Smith-Corona, Olympia), caps the budget near your anchor, and ranks:
+Not just typewriters — any category, any fuzzy wish:
 
-```
-🏆 Top finds
+| You say… | eBay Finder does… |
+|----------|-------------------|
+| *“a Pokémon card with the best value for money under $100”* | biases to graded slabs + vintage WOTC holos, hard-excludes proxies/fakes, ranks by collectible upside per dollar |
+| *“a film camera that actually shoots, not a shelf prop”* | requires *tested/working*, kills *“for parts/display only”*, prefers sellers who post sample shots |
+| *“a mechanical keyboard, quiet switches, under $80, like-new”* | open-box + used condition, budget cap, aspect on switch type, sorts by value |
+| *“vintage Levi’s 501, made in USA, 32×32, honest fade”* | folds the spec into keywords, flags reproductions, rewards original-tag listings |
 
-1. Olympia SM3 — RESTORED & guaranteed working, ribbon included   · score 70/100
-   $110.00 + $18.00 ship = $128.00 · 99.9% positive (15,000 ratings) · New York, US
-   works~100% · value×1.00
-   - working/tested language found
-   - seller feedback 99.9% over 15000 ratings
-
-…
-
-5. Underwood — FOR PARTS OR REPAIR, untested                      · score 0/100
-   $69.00 · ⚠ for-parts
-   - must work, but listing strongly signals non-working   ← hard-gated, even though cheapest
-```
-
-The cheapest listing is *not* the winner when you said "has to work" — and the report tells you exactly why.
+Run any of these via [`examples/`](examples/) or just ask your agent.
 
 ## Why it's different
 
-| | Plain eBay search | ChatGPT/Claude alone | eBay's own AI agent | **Treasure Hunter** |
-|---|:---:|:---:|:---:|:---:|
-| Understands vague, multi-constraint wishes | ❌ | ✅ | ✅ | ✅ |
+| | eBay search | ChatGPT alone | eBay's AI agent | **eBay Finder** |
+|--|:--:|:--:|:--:|:--:|
+| Understands vague, multi-rule wishes | ❌ | ✅ | ✅ | ✅ |
 | Returns **real, current** listings | ✅ | ❌ | ✅ | ✅ |
-| Ranks on value / "must work" with reasons | ❌ | ❌ | ⚠️ | ✅ |
+| Ranks on value / "must work", with reasons | ❌ | ❌ | ⚠️ | ✅ |
 | Works in **any language** | ⚠️ | ✅ | ⚠️ | ✅ |
-| **Open + scriptable + free** | — | — | ❌ | ✅ |
+| **Open · scriptable · free** | — | — | ❌ | ✅ |
 | Works with **no API key** | ✅ | — | — | ✅ |
 
 ## Plays fair with eBay
 
-Treasure Hunter uses eBay's **official Buy/Browse API** when you add a key, and otherwise builds standard search URLs for polite, human-initiated viewing. It does **not** scrape or automate the eBay UI, and it does not impersonate a shopper bot — in line with eBay's developer and user agreements.
+Uses eBay's **official Buy/Browse API** when you add a key, and otherwise builds standard search URLs for polite, human-initiated viewing. It does **not** scrape or automate the eBay UI — in line with eBay's developer and user agreements.
 
-## Project layout
+## Under the hood
 
 ```
-SKILL.md                     the skill (the product) — agent-facing flow
-treasure_hunter/
-  contract.py                shared, immutable data model
-  ebay_grammar.py            single source of truth for eBay codes
-  url_builder.py             keyless: QueryPlan → eBay search URLs
-  browse_api.py              official Browse API client (stdlib only)
-  ranker.py                  transparent 0–100 scoring
-  report.py                  Markdown report
-  cli.py                     orchestrator
-reference/ebay-search-grammar.md   the URL + API cheat sheet
-examples/                    runnable plan specs
-tests/                       pytest, no network
+SKILL.md                  the skill (the product) — what the agent follows
+ebay_finder/
+  contract.py             shared, immutable data model
+  ebay_grammar.py         single source of truth for eBay codes
+  url_builder.py          keyless: wish → eBay search URLs
+  browse_api.py           official Browse API client (stdlib only)
+  ranker.py               transparent 0–100 scoring
+  report.py · cli.py      report + orchestrator
+examples/ · reference/ · tests/
 ```
-
-## Develop
 
 ```bash
-python -m pytest -q          # all green, zero network
-python -m treasure_hunter.cli examples/typewriter.json --json
+python -m pytest -q       # all green, zero network
 ```
 
-Contributions welcome — new category maps, marketplace support, and ranking signals especially. See [`AGENTS.md`](AGENTS.md) and [`CONTRACT.md`](CONTRACT.md).
+Zero runtime dependencies. Pure standard library. Contributions welcome — category maps, more marketplaces, sharper ranking signals. See [`AGENTS.md`](AGENTS.md) and [`CONTRACT.md`](CONTRACT.md).
 
-## License
+---
 
-MIT © 2026 Ke Wang. Built with Claude + Codex. Visuals by [Pika](https://pika.art).
+<div align="center">
 
-<div align="center"><sub>Prices and availability change fast — always verify on eBay before buying.</sub></div>
+**If this helps you find something good, [give it a ⭐](https://github.com/KeWang0622/ebay-finder) — it's how others discover it.**
+
+<sub>MIT © 2026 Ke Wang · built with Claude + Codex · visuals by [Pika](https://pika.art)</sub><br/>
+<sub>Prices and availability change fast — always verify on eBay before buying.</sub>
+
+</div>

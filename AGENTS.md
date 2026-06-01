@@ -1,6 +1,6 @@
 # AGENTS.md — context for AI agents working in this repo
 
-**Project:** Treasure Hunter — turn a vague, plain-language wish ("a 1930–60
+**Project:** eBay Finder — turn a vague, plain-language wish ("a 1930–60
 typewriter, has to work, high value-for-money", in any language) into a smart,
 ranked hunt across eBay.
 
@@ -23,13 +23,13 @@ LLM API key** — it rides the agent that invokes it.
 - **Respect eBay.** Official Browse API for data when keyed; for keyless, generate
   URLs / do polite single-shot human-initiated fetches. Never build a high-volume
   scraper or anything that automates the eBay UI — eBay's user agreement forbids it.
-- Follow `CONTRACT.md` exactly. All data structures live in `treasure_hunter/contract.py`.
+- Follow `CONTRACT.md` exactly. All data structures live in `ebay_finder/contract.py`.
 - Immutability everywhere (frozen dataclasses). Functions return new copies.
-- Keep eBay codes (condition IDs, sort codes) only in `treasure_hunter/ebay_grammar.py`.
+- Keep eBay codes (condition IDs, sort codes) only in `ebay_finder/ebay_grammar.py`.
 
 ## Layout
 ```
-treasure_hunter/
+ebay_finder/
   contract.py     # data structures (DONE) — the API boundary
   ebay_grammar.py # condition/sort/buying-option codes (DONE)
   url_builder.py  # keyless: QueryPlan -> eBay /sch/ URLs  (Claude)
@@ -45,5 +45,5 @@ SKILL.md          # the agent-facing skill (the product)
 ## Verify
 ```
 python -m pytest -q          # tests pass, no network
-python -m treasure_hunter.cli --help
+python -m ebay_finder.cli --help
 ```

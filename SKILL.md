@@ -1,9 +1,9 @@
 ---
-name: treasure-hunter
+name: ebay-finder
 description: >-
   Find anything on eBay from a vague, plain-language wish — in ANY language —
-  even with fuzzy constraints like "must actually work", "best value for money"
-  (高性价比), a date range ("1930–60"), or a vibe ("looks well-loved, not beat up").
+  even with fuzzy constraints like "must actually work", "best value for money",
+  a date range ("1930–60"), or a vibe ("looks well-loved, not beat up").
   Translates the wish into expert eBay searches, fans out across angles, inspects
   listings (incl. photos), and returns a ranked shortlist with reasons. Works with
   NO API key; richer with a free eBay developer key. Use whenever someone wants to
@@ -12,10 +12,10 @@ description: >-
 license: MIT
 ---
 
-# 🔭 Treasure Hunter for eBay
+# 🔭 eBay Finder
 
 Plain keyword search fails the moment a wish has *soft* constraints — "a **1930–60**
-typewriter, **has to work**, **high 性价比**". eBay's own AI shopper is closed/US-only.
+typewriter, **has to work**, **best value for money**". eBay's own AI shopper is closed/US-only.
 This skill is the open one that works for everyone: **you are the intelligence** —
 you read the wish, design the search strategy, judge the photos and prices — and the
 bundled Python tool does the deterministic parts (build precise eBay URLs, optionally
@@ -34,7 +34,7 @@ Read the request and extract the soft goal. Build a `criteria` object:
 - `raw_request`: the user's exact words (any language).
 - `item_summary`: a short English description.
 - `must_work`: true if functional/tested matters.
-- `value_focused`: true for "性价比 / best value / cheap but good".
+- `value_focused`: true for "best value / cheap but good / bang for the buck".
 - `target_price_usd`: their mental anchor if any (convert currency).
 - `era`: e.g. `"1930-1960"`. `deal_breakers`: phrases that disqualify
   (e.g. "repainted", "reproduction"). `nice_to_haves`: phrases that boost
@@ -64,12 +64,12 @@ constantly. The tool adds conservative negative keywords (`-"for parts"`) for yo
 ### 3 — Search
 Write the spec to `plan.json` and run the tool:
 ```bash
-python -m treasure_hunter.cli plan.json --out report.md
+python -m ebay_finder.cli plan.json --out report.md
 ```
 - **Keyless (default):** the tool prints clickable, fully-filtered eBay search URLs.
   Open / fetch them, then read the listings. To rank what you fetched, hand them back:
   ```bash
-  python -m treasure_hunter.cli plan.json --listings listings.json --out report.md
+  python -m ebay_finder.cli plan.json --listings listings.json --out report.md
   ```
   (`listings.json` = a JSON array of items you scraped from the page: `title`, `url`,
   `price_usd`, `shipping_usd`, `condition_raw`, `seller_feedback_pct`, `image_url`, …)
@@ -96,7 +96,7 @@ See `examples/typewriter.json` for a full, runnable spec. The shape:
 ```json
 {
   "criteria": {
-    "raw_request": "1930-60 type writer, has to work, high 性价比",
+    "raw_request": "1930-60 type writer, has to work, high value for money",
     "item_summary": "working vintage typewriter, 1930s–1960s, best value",
     "must_work": true, "value_focused": true,
     "target_price_usd": 120, "era": "1930-1960",
@@ -123,7 +123,7 @@ See `examples/typewriter.json` for a full, runnable spec. The shape:
 - **Multi-language by default.** Understand any language; answer in theirs.
 
 ## Files
-- `treasure_hunter/` — the tool (zero runtime deps, stdlib only).
+- `ebay_finder/` — the tool (zero runtime deps, stdlib only).
 - `reference/ebay-search-grammar.md` — eBay URL + Browse API cheat sheet.
 - `examples/` — runnable plan specs.
 - `SETUP.md` — optional free eBay API key in ~2 minutes.

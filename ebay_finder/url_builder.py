@@ -1,6 +1,6 @@
 """Keyless core: turn a QueryPlan into a real, clickable eBay search URL.
 
-This is what makes Treasure Hunter useful to *everyone*, no API key required.
+This is what makes eBay Finder useful to *everyone*, no API key required.
 The agent designs the search strategy (a handful of QueryPlans); this module
 encodes each one into a ``https://www.ebay.com/sch/i.html?...`` URL with the
 right price band, condition filter, buying options, sort, location preference,
@@ -90,10 +90,10 @@ def build_search_url(plan: QueryPlan, *, exclude_non_working: bool = False) -> s
     if plan.returns_accepted:
         params.append(("LH_RPB", "1"))  # returns accepted refinement
 
-    # Aspect refinements (e.g. Brand) ride as their own query params on the web.
-    for name, values in plan.aspects:
-        if values:
-            params.append((name, "|".join(values)))
+    # NOTE: aspect refinements (e.g. Brand) are intentionally NOT emitted on the
+    # keyless /sch/ path — eBay's public aspect params are opaque/unstable. Fold
+    # brands into `keywords` instead (e.g. "(royal,remington) typewriter"). Aspects
+    # are honored only on the official Browse API path (browse_api.py).
 
     params.append(("_sop", g.SORT_WEB[plan.sort]))
     params.append(("_ipg", "60"))  # 60 results per page — more to scan per fetch
@@ -111,12 +111,14 @@ def _money(value: float) -> str:
 def build_search_urls(
     plans: tuple[QueryPlan, ...], *, exclude_non_working: bool = False
 ) -> tuple[str, ...]:
-    """Encode a fan-out of plans, de-duplicating identical URLs (order-preserving)."""
-    seen: set[str] = set()
-    out: list[str] = []
-    for plan in plans:
-        url = build_search_url(plan, exclude_non_working=exclude_non_working)
-        if url not in seen:
-            seen.add(url)
-            out.append(url)
-    return tuple(out)
+    """Encode a fan-out of plans into exactly one URL per plan, in order.
+
+    The result is parallel to ``plans`` (``urls[i]`` is ``plans[i]``'s URL), so
+    callers can safely ``zip(plans, urls)`` for labelling. We do NOT de-duplicate
+    here — dropping a duplicate would shift every later URL out of alignment with
+    its plan. Distinct plans almost always yield distinct URLs anyway.
+    """
+    return tuple(
+        build_search_url(plan, exclude_non_working=exclude_non_working)
+        for plan in plans
+    )

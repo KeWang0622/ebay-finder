@@ -1,4 +1,4 @@
-"""Deterministic listing ranker for Treasure Hunter.
+"""Deterministic listing ranker for eBay Finder.
 
 The host agent handles taste and intent. This module only applies transparent,
 auditable arithmetic to already-normalized listings.

@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "treasure-hunter-ebay"
+name = "ebay-finder"
 version = "0.1.0"
 description = "Vague plain-language wish -> ranked eBay hunt. Zero runtime dependencies."
 readme = "README.md"
@@ -22,11 +22,11 @@ dependencies = []   # stdlib only, on purpose
 dev = ["pytest>=7"]
 
 [project.urls]
-Homepage = "https://github.com/KeWang0622/ebay-treasure-hunter"
-Issues = "https://github.com/KeWang0622/ebay-treasure-hunter/issues"
+Homepage = "https://github.com/KeWang0622/ebay-finder"
+Issues = "https://github.com/KeWang0622/ebay-finder/issues"
 
 [project.scripts]
-treasure-hunter = "treasure_hunter.cli:main"
+ebay-finder = "ebay_finder.cli:main"
 
 [tool.setuptools]
-packages = ["treasure_hunter"]
+packages = ["ebay_finder"]

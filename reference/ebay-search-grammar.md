@@ -1,7 +1,7 @@
 # eBay Search Grammar Cheat Sheet
 
-The keyless backbone of Treasure Hunter is precise eBay URL construction. This is
-the reference both the code (`treasure_hunter/ebay_grammar.py`) and the agent use.
+The keyless backbone of eBay Finder is precise eBay URL construction. This is
+the reference both the code (`ebay_finder/ebay_grammar.py`) and the agent use.
 
 ## Public search URL — `https://www.ebay.com/sch/i.html`
 

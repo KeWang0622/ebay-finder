@@ -1,6 +1,6 @@
 # Internal Contract
 
-All modules speak the structures in `treasure_hunter/contract.py`. Do not invent
+All modules speak the structures in `ebay_finder/contract.py`. Do not invent
 parallel shapes. If a structure is insufficient, extend `contract.py` and update
 this file in the same change.
 

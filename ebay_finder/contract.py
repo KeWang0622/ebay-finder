@@ -1,4 +1,4 @@
-"""Shared data contract for Treasure Hunter.
+"""Shared data contract for eBay Finder.
 
 Every module in this package speaks these three structures:
 
@@ -68,7 +68,7 @@ class Criteria:
     raw_request: str                       # verbatim user text, any language
     item_summary: str                      # short normalized description, English
     must_work: bool = False                # functional/tested requirement
-    value_focused: bool = True             # optimize price-for-quality (性价比)
+    value_focused: bool = True             # optimize price-for-quality (best bang for the buck)
     target_price_usd: Optional[float] = None   # the user's mental anchor, if any
     deal_breakers: tuple[str, ...] = ()    # phrases that disqualify (e.g. "repaint")
     nice_to_haves: tuple[str, ...] = ()    # phrases that boost score

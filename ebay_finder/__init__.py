@@ -1,4 +1,4 @@
-"""Treasure Hunter — vague wish -> ranked eBay hunt.
+"""eBay Finder — vague wish -> ranked eBay hunt.
 
 Public surface kept small on purpose; see contract.py for the data model.
 """

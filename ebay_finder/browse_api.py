@@ -1,4 +1,4 @@
-"""Official eBay Browse API client for structured Treasure Hunter searches.
+"""Official eBay Browse API client for structured eBay Finder searches.
 
 This module intentionally stays small and deterministic: it only performs
 OAuth, one Browse search endpoint, and normalization into the shared contract.
@@ -54,7 +54,10 @@ def get_app_token(
 def search(plan: QueryPlan, token: str) -> tuple[NormalizedListing, ...]:
     """Run one QueryPlan against the Browse item_summary/search endpoint."""
     params = _build_search_params(plan)
-    url = f"{g.BROWSE_SEARCH_ENDPOINT}?{urllib.parse.urlencode(params, safe='{}[]|:,.')}"
+    # Percent-encode everything (no `safe` chars). eBay decodes %7B/%7C/etc back
+    # to {|,..} server-side, so the filter grammar still works — and arbitrary
+    # keyword/aspect text can no longer inject filter operators.
+    url = f"{g.BROWSE_SEARCH_ENDPOINT}?{urllib.parse.urlencode(params)}"
     request = urllib.request.Request(
         url,
         headers={
@@ -164,7 +167,7 @@ def _error_body(exc: BaseException) -> str:
 def _default_cache_path(marketplace: str) -> str:
     safe_marketplace = "".join(ch for ch in marketplace if ch.isalnum() or ch in ("-", "_"))
     return os.path.expanduser(
-        os.path.join("~", ".cache", "treasure_hunter", f"ebay_token_{safe_marketplace}.json")
+        os.path.join("~", ".cache", "ebay_finder", f"ebay_token_{safe_marketplace}.json")
     )
 
 
@@ -199,8 +202,13 @@ def _write_cached_token(path: str, token: dict, client_id: str, marketplace: str
         directory = os.path.dirname(path)
         if directory:
             os.makedirs(directory, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as fh:
+        # Write 0600 to a temp file, then atomically replace — the cached token is
+        # a credential, so it must never be world-readable or half-written.
+        tmp = f"{path}.{os.getpid()}.tmp"
+        fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
             json.dump(data, fh)
+        os.replace(tmp, path)
     except OSError:
         # A cache write failure should not prevent a valid in-memory token.
         return
@@ -234,18 +242,23 @@ def _build_filter(plan: QueryPlan) -> str | None:
         parts.append("priceCurrency:USD")
 
     if plan.conditions:
+        # Numeric eBay condition IDs belong in `conditionIds`; the `conditions`
+        # filter only accepts enum names (NEW|USED|UNSPECIFIED). See
+        # developer.ebay.com/api-docs/buy/static/ref-buy-browse-filters.html
         ids = "|".join(g.CONDITION_ID[condition] for condition in plan.conditions)
-        parts.append(f"conditions:{{{ids}}}")
+        parts.append(f"conditionIds:{{{ids}}}")
 
     if plan.buying_options:
         options = "|".join(g.BUYING_OPTION_API[option] for option in plan.buying_options)
         parts.append(f"buyingOptions:{{{options}}}")
 
     if plan.item_location_country:
-        parts.append(f"itemLocationCountry:{plan.item_location_country}")
+        parts.append(f"itemLocationCountry:{_sanitize_operand(plan.item_location_country)}")
 
-    if plan.returns_accepted is not None:
-        parts.append(f"returnsAccepted:{str(plan.returns_accepted).lower()}")
+    # eBay documents only `returnsAccepted:true` as a meaningful refinement;
+    # `false` is not a documented value, so we omit it (and None).
+    if plan.returns_accepted is True:
+        parts.append("returnsAccepted:true")
 
     return ",".join(parts) if parts else None
 
@@ -258,14 +271,28 @@ def _price_filter(min_usd: float | None, max_usd: float | None) -> str | None:
     return f"price:[{lower}..{upper}]"
 
 
+# eBay filter/aspect grammar uses these as delimiters: , | { } : [ ]. Aspect names
+# and values come from the agent, so we strip those metacharacters before
+# interpolation — percent-encoding alone is not enough, since eBay decodes the
+# value back to literal grammar characters on the server.
+_GRAMMAR_METACHARS = str.maketrans({c: None for c in ",|{}:[]"})
+
+
+def _sanitize_operand(text: str) -> str:
+    """Remove eBay filter-grammar delimiters from an agent-supplied operand."""
+    return text.translate(_GRAMMAR_METACHARS).strip()
+
+
 def _build_aspect_filter(plan: QueryPlan) -> str | None:
     if not plan.category_id or not plan.aspects:
         return None
-    parts = [f"categoryId:{plan.category_id}"]
+    # category_id is controlled (numeric), but sanitize defensively anyway.
+    parts = [f"categoryId:{_sanitize_operand(plan.category_id)}"]
     for name, values in plan.aspects:
-        clean_values = tuple(value for value in values if value)
-        if clean_values:
-            parts.append(f"{name}:{{{'|'.join(clean_values)}}}")
+        clean_name = _sanitize_operand(name)
+        clean_values = tuple(_sanitize_operand(v) for v in values if v and _sanitize_operand(v))
+        if clean_name and clean_values:
+            parts.append(f"{clean_name}:{{{'|'.join(clean_values)}}}")
     if len(parts) == 1:
         return None
     return ",".join(parts)
@@ -282,6 +309,10 @@ def _item_to_listing(item: dict) -> NormalizedListing | None:
     shipping, shipping_currency = _shipping_cost(item.get("shippingOptions"))
     if currency == "USD" and shipping_currency:
         currency = shipping_currency
+    # NOTE: price_usd/shipping_usd hold the listing price in `currency` (USD on the
+    # default EBAY_US marketplace). A single search returns one marketplace, so the
+    # ranker's within-cohort value math is currency-consistent. We do NOT convert
+    # FX across marketplaces — the report surfaces `currency` so non-USD is visible.
 
     return NormalizedListing(
         item_id=item_id,
