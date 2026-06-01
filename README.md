@@ -66,7 +66,7 @@ The trick: **the AI agent running the skill is the brain.** It reads your wish, 
 |--|--|
 | **1 · Understand** | your wish → a structured goal (must-work, budget, era, deal-breakers) — *any language in, your language out* |
 | **2 · Strategize** | one weak query becomes several smart angles: broad, per-brand, budget-capped, newest-first |
-| **3 · Search** | build precise eBay search URLs *(keyless)* — or call the official Browse API *(free key)* |
+| **3 · Search** | get real listings via a fallback ladder: official Browse API *(free key)* → fetch the search pages → **eBay-restricted web search**. Always ends with actual `/itm/` listings, never just search pages |
 | **4 · Inspect** | the agent looks at the listing **photos** to confirm condition and "working" claims |
 | **5 · Rank** | transparent 0–100 score: value-vs-market, works-confidence, condition, seller trust, returns |
 
@@ -81,7 +81,7 @@ Then just ask your agent, however you'd say it:
 > *“find me a 1930–60 typewriter that actually works, best value under $150”*
 > *“una máquina de escribir de los años 40 que funcione, buena relación calidad-precio”*
 
-**No API key needed** — you get expertly-filtered eBay search links plus a ranked read of the listings. Want it to fetch and rank results automatically? Add a [free eBay key](SETUP.md) (~2 min).
+**No API key needed** — it returns a ranked list of real listings (via fetch, or an eBay-restricted web-search fallback when fetching is blocked), with fair-price bands and risk flags. Want fully-automatic structured fetch + ranking? Add a [free eBay key](SETUP.md) (~2 min).
 
 <details>
 <summary><b>Run the tool directly (optional)</b></summary>

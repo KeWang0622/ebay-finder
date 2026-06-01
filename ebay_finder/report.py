@@ -94,10 +94,17 @@ def render(result: HuntResult, *, top: int = 8) -> str:
                 lines.append(f"  - {reason}")
             lines.append("")
     else:
-        lines.append("## No candidates fetched")
+        lines.append("## No listings gathered yet — finish the discovery ladder")
         lines.append("")
-        lines.append("Use the search URLs below — they encode the full strategy and "
-                     "open directly on eBay. (Add an eBay API key for inline ranked results.)")
+        lines.append("The search strategy is ready (URLs below), but the deliverable is a "
+                     "ranked list of real listings. Gather them, then re-run with "
+                     "`--listings listings.json`:")
+        lines.append("")
+        lines.append("1. **API mode** — set `EBAY_CLIENT_ID`/`EBAY_CLIENT_SECRET` for automatic fetch + rank.")
+        lines.append("2. **Fetch** each search URL below and collect the listing cards.")
+        lines.append("3. **eBay-restricted web search** (works even when fetching is blocked): "
+                     "search each angle with `allowed_domains=[\"ebay.com\"]` and keep the "
+                     "`ebay.com/itm/…` results.")
         lines.append("")
 
     # ---- Search strategy / URLs ------------------------------------------ #

@@ -61,21 +61,43 @@ For each plan set: `label` (why this angle), `keywords`, `category_id` (see
 Encode `must_work` as **ranking** intent, not a hard filter — sellers mislabel
 constantly. The tool adds conservative negative keywords (`-"for parts"`) for you.
 
-### 3 — Search
-Write the spec to `plan.json` and run the tool:
+### 3 — Search → **always end with real listings**
+> **The deliverable is a ranked list of actual eBay listings (each an `ebay.com/itm/…`
+> link) that satisfy the user's inputs — NEVER a bare list of search-page URLs.**
+> Search-page URLs are a *fallback for the human to keep browsing*, shown in addition
+> to listings, never instead of them. Walk down this ladder until you have listings:
+
+First build the plans into URLs + a spec the tool understands:
 ```bash
-python -m ebay_finder.cli plan.json --out report.md
+python -m ebay_finder.cli plan.json --out report.md   # always: builds the search URLs
 ```
-- **Keyless (default):** the tool prints clickable, fully-filtered eBay search URLs.
-  Open / fetch them, then read the listings. To rank what you fetched, hand them back:
-  ```bash
-  python -m ebay_finder.cli plan.json --listings listings.json --out report.md
-  ```
-  (`listings.json` = a JSON array of items you scraped from the page: `title`, `url`,
-  `price_usd`, `shipping_usd`, `condition_raw`, `seller_feedback_pct`, `image_url`, …)
-- **API mode (richer):** if `EBAY_CLIENT_ID` and `EBAY_CLIENT_SECRET` are set, the
-  tool calls the official Browse API, fetches structured listings, dedupes, and ranks
-  automatically. See `SETUP.md` for the 2-minute free key.
+
+**Discovery ladder — stop at the first rung that yields listings:**
+
+1. **API mode** — if `EBAY_CLIENT_ID` + `EBAY_CLIENT_SECRET` are set, the tool calls the
+   official Browse API and fetches + dedupes + ranks structured listings automatically.
+   (See `SETUP.md` for the free 2-minute key.) Best quality. Done.
+
+2. **Fetch the search URLs** — open each generated `/sch/` URL with your fetch/browser
+   tool, read the listing cards, and collect items into `listings.json`.
+
+3. **eBay-restricted web search (universal fallback — works even when fetch is blocked).**
+   If you cannot fetch eBay pages (datacenter IPs are often challenged), use your web
+   search tool **restricted to `ebay.com`**, one query per plan, e.g.
+   `Olympia SM3 typewriter serviced working` with `allowed_domains=["ebay.com"]`.
+   Keep the `ebay.com/itm/<id>` results — those are real, current listings. This rung
+   ALWAYS produces item links, so you are never left with only search pages.
+
+Then rank whatever you gathered:
+```bash
+python -m ebay_finder.cli plan.json --listings listings.json --out report.md
+```
+`listings.json` = a JSON array of items, each: `title`, `url` (the `/itm/` link),
+and any of `price_usd`, `shipping_usd`, `condition_raw`, `seller_feedback_pct`,
+`item_location`, `image_url`. Missing fields are fine — rank on what you have and
+flag unknowns. If you only have titles + links (rung 3), still return them as a
+ranked shortlist using working/condition signals in the titles, with fair-price
+bands and a clear "confirm price ≤ budget" note.
 
 ### 4 — Inspect (use your eyes)
 For the top candidates, **look at the photos** (`image_url`): confirm the era/model,
@@ -85,11 +107,12 @@ exactly what keyword search can't do — it's the skill's superpower.
 
 ### 5 — Rank & report
 The ranker scores 0–100 on value-vs-cohort, working-confidence, condition fit, seller
-trust, returns, deal-breakers and nice-to-haves, with a reason on every line. Present
-the **top finds** with: total price (incl. shipping), why it ranked, any ⚠ flags
-("for-parts", "no-returns", "low-feedback", "price-outlier-low"), and the link. Then
-list the search URLs so the user can keep hunting. Add your own one-line verdict and a
-fair-price band. **Reply in the user's language.**
+trust, returns, deal-breakers and nice-to-haves, with a reason on every line. Lead with
+the **ranked list of actual listings** — each with its `ebay.com/itm/…` link, total
+price (incl. shipping), why it ranked, and any ⚠ flags ("for-parts", "no-returns",
+"low-feedback", "price-outlier-low"). Add your own one-line verdict and a fair-price
+band. Only *after* the listings, you may add the raw search URLs so the user can keep
+browsing. **Reply in the user's language.** Never reply with only search-page URLs.
 
 ## Plan spec example (flagship: the typewriter)
 See `examples/typewriter.json` for a full, runnable spec. The shape:
@@ -115,9 +138,13 @@ See `examples/typewriter.json` for a full, runnable spec. The shape:
 ```
 
 ## Principles
-- **Respect eBay.** Use the official Browse API when keyed; keyless = build URLs and do
-  polite, human-initiated fetches. Never build a high-volume scraper or automate the
-  eBay UI — eBay's user agreement forbids agentic bots.
+- **Always deliver listings.** In every case — API, fetch, or eBay-restricted web-search
+  fallback — return a ranked list of real `ebay.com/itm/…` listings that satisfy the
+  user's inputs. Search-page links are a bonus for further browsing, never the answer.
+- **Respect eBay.** Use the official Browse API when keyed; keyless = build URLs, do
+  polite human-initiated fetches, or use web search restricted to `ebay.com`. Never
+  build a high-volume scraper or automate the eBay UI — eBay's user agreement forbids
+  agentic bots.
 - **Be honest.** Prices/availability change fast; tell the user to verify before buying.
   Surface risk flags, don't hide them to make a result look good.
 - **Multi-language by default.** Understand any language; answer in theirs.
@@ -125,5 +152,6 @@ See `examples/typewriter.json` for a full, runnable spec. The shape:
 ## Files
 - `ebay_finder/` — the tool (zero runtime deps, stdlib only).
 - `reference/ebay-search-grammar.md` — eBay URL + Browse API cheat sheet.
+- `reference/discovery-ladder.md` — how to always return real listings (API → fetch → eBay-restricted web search).
 - `examples/` — runnable plan specs.
 - `SETUP.md` — optional free eBay API key in ~2 minutes.
